@@ -5,7 +5,6 @@
 import CustomSprite from './CustomSprite'
 import Engine from './Engine'
 import NPC from './NPC'
-import OrientationPin from './OrientationPin'
 import Utils from '../shared/Utils'
 
 var Animal = new Phaser.Class({
@@ -15,7 +14,6 @@ var Animal = new Phaser.Class({
     initialize: function Animal() {
         NPC.call(this);
         this.entityType = 'animal';
-        this.orientationPin = new OrientationPin('animal',this);
     },
 
     setUp: function(data){
@@ -62,7 +60,6 @@ var Animal = new Phaser.Class({
 
     update: function(data){
         NPC.prototype.update.call(this,data);
-        this.manageOrientationPin();
     },
 
     processMeleeAttack: function(facing){
@@ -82,8 +79,6 @@ var Animal = new Phaser.Class({
         //console.log('remove ',this.id,'(',this.tileX,',',this.tileY,',',this.chunk,',)');
         //Engine.animalUpdates.add(this.id,'remove');
         CustomSprite.prototype.remove.call(this);
-        this.orientationPin.hide();
-        this.orientationPin.reset();
         delete Engine.animals[this.id];
     },
 

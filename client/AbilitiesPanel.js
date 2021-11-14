@@ -126,14 +126,6 @@ function AbilitySlot(x,y,width,height){
     this.zone = UI.scene.add.zone(this.x,this.y,width,height);
     this.zone.setInteractive();
     this.zone.setOrigin(0);
-    this.zone.on('pointerover',function(){
-        UI.tooltip.updateInfo('ability',this.aid);
-        UI.tooltip.display();
-    }.bind(this));
-    this.zone.on('pointerout',function(){
-        UI.tooltip.hide();
-        UI.setCursor();
-    }.bind(this));
     this.zone.on('pointerup',function(){
         if(Engine.player.hasAbility(this.aid)) return;
         Engine.currentMenu.panels['abilities'].purchasePanel.display(this.aid);

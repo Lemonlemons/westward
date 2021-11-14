@@ -5,7 +5,7 @@
 import Utils from './Utils'
 
 var PFUtils = {
-    speed: 5, // 5 tiles/sec
+    speed: 8, // 5 tiles/sec
     battleRange: 3
 };
 

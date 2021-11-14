@@ -21,8 +21,8 @@ var config = {
     parent: 'game',
     scene: [Boot, UI, Engine],
     dom: {
-        createContainer: true
-      }
+      createContainer: true
+    }
 };
 
 var game = new Phaser.Game(config);

@@ -340,10 +340,6 @@ var Building = new Phaser.Class({
 
     // ### INPUT ###
 
-    /*handleDown: function(){
-        //UI.setCursor(UI.buildingCursor2);
-    },*/
-
     findEntrance: function(){
         var closest = null;
         var minDist = Infinity;
@@ -384,33 +380,6 @@ var Building = new Phaser.Class({
         }
     },
 
-    setCursor: function(){
-        if(!BattleManager.inBattle && Engine.inMenu) return;
-        var cursor = null;
-        if(BattleManager.inBattle) {
-            if (this.civBuilding && this.built) cursor = (Utils.nextTo(Engine.player, this) ? 'melee' : Engine.player.getRangedCursor());
-        }else{
-            if(this.civBuilding){
-                if(this.built) cursor = 'combat';
-            }else{
-                cursor = 'building';
-            }
-        }
-        if(cursor) UI.setCursor(cursor);
-        UI.tooltip.updateInfo('building',{id:this.id});
-        UI.tooltip.display();
-    },
-
-    handleOver: function(){
-        UI.manageCursor(1,'building',this);
-        // this.highlight();
-    },
-
-    handleOut: function(){
-        UI.manageCursor(0,'building');
-        UI.tooltip.hide();
-        // this.resetPipeline();
-    }
 });
 
 export default Building

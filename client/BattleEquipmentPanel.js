@@ -63,8 +63,6 @@ BattleEquipmentPanel.prototype.addLifeBar = function () {
 BattleEquipmentPanel.prototype.addEquipmentHolder = function (x, y, addText) {
     var holder = UI.scene.add.sprite(x, y, 'UI', 'battleholder');
     holder.setInteractive();
-    holder.on('pointerover', UI.tooltip.display.bind(UI.tooltip));
-    holder.on('pointerout', UI.tooltip.hide.bind(UI.tooltip));
     var icon = new ItemSprite(x, y);
 
     if (addText) {

@@ -50,8 +50,6 @@ BigButton.prototype.attachCallbacks = function(element){
     element.setInteractive();
     element.on('pointerdown',this.handleDown.bind(this));
     element.on('pointerup',this.handleClick.bind(this));
-    element.on('pointerover',this.handleOver.bind(this));
-    element.on('pointerout',this.handleOut.bind(this));
 };
 
 BigButton.prototype.setCallback = function(callback){
@@ -93,23 +91,6 @@ BigButton.prototype.handleClick = function(){
         this.callback();
         this.lastClick = Date.now();
     }
-    this.handleOver();
-};
-
-BigButton.prototype.handleOver = function(){
-    if(!this.enabled) return;
-    this.slices[0].setFrame(this.bt+'_left_lit');
-    this.slices[1].setFrame(this.bt+'_middle_lit');
-    this.slices[2].setFrame(this.bt+'_right_lit');
-    this.resetSize();
-};
-
-BigButton.prototype.handleOut = function(){
-    if(!this.enabled) return;
-    this.slices[0].setFrame(this.bt+'_left');
-    this.slices[1].setFrame(this.bt+'_middle');
-    this.slices[2].setFrame(this.bt+'_right');
-    this.resetSize();
 };
 
 

@@ -23,12 +23,6 @@ ProgressBar.prototype.setUpZone = function(zone){
     zone.setScrollFactor(0);
     zone.setInteractive();
     zone.setVisible(false);
-    var _bar = this;
-    zone.on('pointerover',function(){
-        UI.tooltip.updateInfo('free',{title:_bar.level+'/'+_bar.max});
-        UI.tooltip.display();
-    });
-    zone.on('pointerout',UI.tooltip.hide.bind(UI.tooltip));
     return zone;
 };
 

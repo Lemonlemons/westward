@@ -12,7 +12,6 @@ import Menu from './Menu'
 import NamePanel from './NamePanel'
 import {Stats} from '../shared/Stats'
 import Tooltip from './Tooltip'
-import UICursor from './UICursor'
 import UIHolder from './UIHolder'
 import Utils from '../shared/Utils'
 
@@ -38,8 +37,6 @@ var UI = {
 
         this.load.html('tooltip', '/assets/html/tooltip.html');
 
-        this.load.atlas('cursors', 'assets/sprites/cursors.png', 'assets/sprites/cursors.json');
-
         if (Client.isNewPlayer()) {
             this.load.image('bigbg', 'assets/sprites/bigbg.png');
             this.load.image('bigbg_mask', 'assets/sprites/bigbg_mask.png');
@@ -62,21 +59,10 @@ var UI = {
         UI.textsData = this.cache.json.get('texts'); // TODO: incoherent with how Engine loads json data (bundled in webpack)
         UI.classesData = this.cache.json.get('classes');
 
-
-        UI.scene.sys.game.canvas.style.cursor = 'none';
-        UI.cursor = new UICursor();
-        UI.setCursor();
-
         UI.hovering = [];
         UI.hoverFlower = 0;
 
         this.input.setTopOnly(false);
-        this.input.on('pointermove', function (event) {
-            if (UI.tooltip) UI.tooltip.updatePosition(event.x, event.y);
-
-            // Add custom cursor sprite to mouse cordinates
-            if (UI.cursor) UI.cursor.setPosition(event.x, event.y);
-        });
         if (Client.isNewPlayer()) UI.classMenu = UI.makeClassMenu();
 
         this.input.keyboard.on('keydown', UI.handleKeyboard);
@@ -217,75 +203,6 @@ UI.getGameWidth = function () {
 UI.getGameHeight = function () {
     return UI.getConfig().height;
 };
-
-UI.manageCursor = function (inout, type, target) {
-
-    if (target) {
-
-        if (target.entityType == 'cell' && Engine.cursorOnTarget) return;
-
-        Engine.cursorOnTarget = (target.entityType != 'cell');
-        target.setCursor();
-    } else {
-        UI.setCursor();
-    }
-    /*var data = {
-        type: type,
-        target: target
-    };
-    var hovering = UI.hovering.last() || {type:'ground'};
-
-    if(inout == 1){
-        if(hovering.type == 'sticky') return; // don't change cursor if currently sticky
-        if(type == 'tile' && (hovering.type == 'npc')) return;
-        UI.hovering.push(data);
-    }else{
-        if(type != hovering.type) return;
-        UI.hovering.pop();
-    }
-
-    var hovering = UI.hovering.last() || {type:'ground'};
-    //console.log('hovering : ',hovering.type);
-    if(hovering.type == 'sticky'){
-        UI.setCursor('bomb');
-    }else if(hovering.type == 'UI'){
-        UI.setCursor();
-    }else if(hovering.type != 'UI' && hovering.type != 'ground' && hovering.type != 'tile') {
-        hovering.target.setCursor();
-    }else if(hovering.type == 'tile'){
-        //UI.setCursor('move');
-        UI.setCursor();
-    }else if(hovering.type == 'ground'){
-        if(Engine.inMenu){
-            UI.setCursor();
-        }else {
-            UI.setCursor('move');
-        }
-    }*/
-};
-
-UI.downCursor = function () {
-    // if (UI.dualCursors.includes(UI.currentCursor)) UI.setCursor(UI.currentCursor, true);
-    UI.cursor.down();
-};
-
-UI.upCursor = function () {
-    // UI.setCursor(UI.currentCursor);
-    UI.cursor.up();
-};
-
-/**
- * Change the appearance of the cursor based on what it's hovering
- * @param {string} cursor - key of the frames dict of the cursor to display;
- * if nothing, then displays default one
- */
-UI.setCursor = function (cursor) {
-    // var cursorFile = UI.cursors[cursor || 'default'];
-    // UI.scene.sys.game.canvas.style.cursor = 'url(/assets/sprites/cursors/'+cursorFile+(down ? '2' : '')+'.png), auto';
-    // UI.currentCursor = cursor;
-    UI.cursor.changeCursor(cursor);
-};
-
 
 /**
  * What to do when clicked an item in belt (vs. backpack).
@@ -541,13 +458,6 @@ UI.displayRegion = function (data, world) {
         //UI.SSpanel = panel;
         UI.selectSettlement(this.setlID);
     }.bind(icon));
-    icon.on('pointerover', function () {
-        UI.tooltip.updateInfo('free', {title: data.name});
-        UI.tooltip.display();
-    });
-    icon.on('pointerout', function () {
-        UI.tooltip.hide();
-    });
 };
 
 UI.displayCamps = function (list) {
@@ -563,13 +473,6 @@ UI.displayCamp = function (data) {
     icon.setScale(0.6);
     icon.setOrigin(0.5, 1);
     icon.setInteractive();
-    icon.on('pointerover', function () {
-        UI.tooltip.updateInfo('free', {title: 'Enemy camp'});
-        UI.tooltip.display();
-    });
-    icon.on('pointerout', function () {
-        UI.tooltip.hide();
-    });
     UI.SScontent.push(icon);
 };
 

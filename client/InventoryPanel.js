@@ -31,8 +31,6 @@ InventoryPanel.prototype.createZone = function(){
     const zone = UI.scene.add.zone(0, 0, 0, 0);
     zone.setDepth(10);
     zone.setScrollFactor(0);
-    zone.on('pointerover',UI.tooltip.display.bind(UI.tooltip));
-    zone.on('pointerout',UI.tooltip.hide.bind(UI.tooltip));
     this.content.push(zone);
     return zone;
 };

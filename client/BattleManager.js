@@ -67,7 +67,6 @@ BattleManager.updateBattle = function(battleData){
     if(!BattleManager.activeFighter) return; // Can happen when spawning in a battle before other fighters are loaded
 
     BattleManager.isPlayerTurn = BattleManager.activeFighter.isHero;
-    if(!BattleManager.isPlayerTurn) UI.manageCursor(0,'sticky'); // remove any sticky
     BattleManager.actionTaken = false;
     BattleManager.activeFighter.isActiveFighter = true;
     Engine.updateGrid();
@@ -208,8 +207,6 @@ BattleManager.onDeath = function(){
 };
 
 BattleManager.endFight = function(){
-    //UI.setCursor();
-    UI.manageCursor(0,'sticky'); // remove sticky, if any
     BattleManager.inBattle = false;
     Engine.menus.battle.hide();
     BattleManager.cleanOrderBoxes();

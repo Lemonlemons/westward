@@ -44,8 +44,6 @@ EquipmentPanel.prototype.addEquipSlot = function (x, y, name, desc, shade, displ
     var slot = UI.scene.add.sprite(this.x + x, this.y + y, 'UI', 'equipment-slot');
     var item = new ItemSprite(this.x + x + 20, this.y + y + 20);
     slot.setInteractive();
-    slot.on('pointerover', UI.tooltip.display.bind(UI.tooltip));
-    slot.on('pointerout', UI.tooltip.hide.bind(UI.tooltip));
     slot.on('pointerup', Engine.unequipClick.bind(slotObj));
     slot.setDepth(1);
     slot.setScrollFactor(0);

@@ -42,8 +42,8 @@ var TradeEvent = Event.discriminator(
         nb: Number,
         building: Number,
         owner: String
-    }),
-    {discriminatorKey: 'kind'}
+    },
+    {discriminatorKey: 'kind'})
 );
 
 var CraftEvent = Event.discriminator(
@@ -51,24 +51,24 @@ var CraftEvent = Event.discriminator(
     new mongoose.Schema({
         item: Number,
         nb: Number,
-    }),
-    {discriminatorKey: 'kind'}
+    },
+    {discriminatorKey: 'kind'})
 );
 
 var UseEvent = Event.discriminator(
     'UseEvent',
     new mongoose.Schema({
         item: Number
-    }),
-    {discriminatorKey: 'kind'}
+    },
+    {discriminatorKey: 'kind'})
 );
 
 var PickUpEvent = Event.discriminator(
     'PickUpEvent',
     new mongoose.Schema({
         item: Number
-    }),
-    {discriminatorKey: 'kind'}
+    },
+    {discriminatorKey: 'kind'})
 );
 
 var PricesEvent = Event.discriminator(
@@ -77,24 +77,24 @@ var PricesEvent = Event.discriminator(
         item: Number,
         buy: Number,
         sell: Number
-    }),
-    {discriminatorKey: 'kind'}
+    },
+    {discriminatorKey: 'kind'})
 );
 
 var LootEvent = Event.discriminator(
     'LootEvent',
     new mongoose.Schema({
         name: String
-    }),
-    {discriminatorKey: 'kind'}
+    },
+    {discriminatorKey: 'kind'})
 );
 
 var ExploreEvent = Event.discriminator(
     'ExploreEvent',
     new mongoose.Schema({
         aoi: Number
-    }),
-    {discriminatorKey: 'kind'}
+    },
+    {discriminatorKey: 'kind'})
 );
 
 var GoldEvent = Event.discriminator(
@@ -102,8 +102,8 @@ var GoldEvent = Event.discriminator(
     new mongoose.Schema({
         amount: Number,
         building: Number
-    }),
-    {discriminatorKey: 'kind'}
+    },
+    {discriminatorKey: 'kind'})
 );
 
 var BeltEvent = Event.discriminator(
@@ -111,8 +111,8 @@ var BeltEvent = Event.discriminator(
     new mongoose.Schema({
         item: Number,
         direction: String
-    }),
-    {discriminatorKey: 'kind'}
+    },
+    {discriminatorKey: 'kind'})
 );
 
 var BuildingEvent = Event.discriminator(
@@ -120,8 +120,8 @@ var BuildingEvent = Event.discriminator(
     new mongoose.Schema({
         building: Number,
         owner: String
-    }),
-    {discriminatorKey: 'kind'}
+    },
+    {discriminatorKey: 'kind'})
 );
 
 var NewBuildingEvent = Event.discriminator(
@@ -130,8 +130,8 @@ var NewBuildingEvent = Event.discriminator(
         building: Number,
         x: Number,
         y: Number
-    }),
-    {discriminatorKey: 'kind'}
+    },
+    {discriminatorKey: 'kind'})
 );
 
 var BattleEvent = Event.discriminator(
@@ -139,16 +139,16 @@ var BattleEvent = Event.discriminator(
     new mongoose.Schema({
         category: String,
         type: Number
-    }),
-    {discriminatorKey: 'kind'}
+    },
+    {discriminatorKey: 'kind'})
 );
 
 var ChatEvent = Event.discriminator(
     'ChatEvent',
     new mongoose.Schema({
         txt: String
-    }),
-    {discriminatorKey: 'kind'}
+    },
+    {discriminatorKey: 'kind'})
 );
 ChatEvent.prototype.getDesc = function(){
     return this.prefix()+'Said "'+this.txt+'"';
@@ -158,16 +158,16 @@ var MenuEvent = Event.discriminator(
     'MenuEvent',
     new mongoose.Schema({
         menu: String
-    }),
-    {discriminatorKey: 'kind'}
+    },
+    {discriminatorKey: 'kind'})
 );
 
 var HelpEvent = Event.discriminator(
     'HelpEvent',
     new mongoose.Schema({
         which: String
-    }),
-    {discriminatorKey: 'kind'}
+    },
+    {discriminatorKey: 'kind'})
 );
 
 var ConnectEvent = Event.discriminator(
@@ -176,40 +176,40 @@ var ConnectEvent = Event.discriminator(
         stl: Number,
         name: String,
         re: Boolean
-    }),
-    {discriminatorKey: 'kind'}
+    },
+    {discriminatorKey: 'kind'})
 );
 
 var DisconnectEvent = Event.discriminator(
     'DisconnectEvent',
-    new mongoose.Schema(),
-    {discriminatorKey: 'kind'}
+    new mongoose.Schema({},
+    {discriminatorKey: 'kind'})
 );
 
 var RespawnEvent = Event.discriminator(
     'RespawnEvent',
-    new mongoose.Schema(),
-    {discriminatorKey: 'kind'}
+    new mongoose.Schema({},
+    {discriminatorKey: 'kind'})
 );
 
 var ServerStartEvent = Event.discriminator(
     'ServerStartEvent',
-    new mongoose.Schema(),
-    {discriminatorKey: 'kind'}
+    new mongoose.Schema({},
+    {discriminatorKey: 'kind'})
 );
 
 var TutorialStartEvent = Event.discriminator(
     'TutorialStartEvent',
-    new mongoose.Schema(),
-    {discriminatorKey: 'kind'}
+    new mongoose.Schema({},
+    {discriminatorKey: 'kind'})
 );
 
 var TutorialEndEvent = Event.discriminator(
     'TutorialEndEvent',
     new mongoose.Schema({
         step: Number
-    }),
-    {discriminatorKey: 'kind'}
+    },
+    {discriminatorKey: 'kind'})
 );
 
 var Prism = {};

@@ -18,17 +18,6 @@ function ItemSlot(x,y,width,height){
     this.zone = UI.scene.add.zone(this.x,this.y,width,height);
     this.zone.setInteractive();
     this.zone.setOrigin(0);
-    this.zone.on('pointerover',function(){
-        if(this.checkForPanelOnTop()) return;
-        UI.tooltip.updateInfo('item',{id:this.itemID});
-        UI.tooltip.display();
-        UI.setCursor('item');
-    }.bind(this));
-    this.zone.on('pointerout',function(){
-        if(this.checkForPanelOnTop()) return;
-        UI.tooltip.hide();
-        UI.setCursor();
-    }.bind(this));
 
     this.content = [this.name, this.zone];
 

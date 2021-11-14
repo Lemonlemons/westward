@@ -51,16 +51,6 @@ Panel.prototype.addButton = function(x,y,color,symbol,callback,helpTitle,helpTex
     zone.setScrollFactor(0);
     zone.setInteractive();
     zone.setVisible(false);
-    if(helpTitle || helpText) {
-        zone.on('pointerover', function () {
-            UI.tooltip.updateInfo('free', {title: helpTitle, body: helpText});
-            UI.tooltip.display();
-            if(symbol == 'help') Client.logMisc({type:'help',which:logID});
-        });
-        zone.on('pointerout', function () {
-            UI.tooltip.hide();
-        });
-    }
     this.content.push(zone);
 
     x += 5;

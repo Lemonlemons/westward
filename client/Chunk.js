@@ -53,7 +53,7 @@ Chunk.prototype.draw = function(){
             this.drawTile(x, y, name);
         },this);
     },this);
-    if(this.tiles.length > 700) console.warn(this.tiles.length); // TODO: remove eventually
+    // if(this.tiles.length > 700) console.warn(this.tiles.length); // TODO: remove eventually
 
     // Decor
     this.decor.forEach(function (data) {
@@ -91,13 +91,13 @@ Chunk.prototype.drawTile = function(x,y,tile){
 
 Chunk.prototype.getAtlasData = function(image,data,longname){
     if(longname){
-        return this.tilesetData.atlas[image][data];
+        return this.tilesetData.atlas[image].customData[data];
     }else {
         if (!(image in this.tilesetData.shorthands)){
             console.warn('Unknown shorthand',image);
             return false;
         }
-        return this.tilesetData.atlas[this.tilesetData.shorthands[image]][data];
+        return this.tilesetData.atlas[this.tilesetData.shorthands[image]].customData[data];
     }
 };
 
