@@ -17,23 +17,6 @@ var UIElement = new Phaser.Class({
         this.menu = menu;
 
         this.on('pointerup',this.handleClick.bind(this));
-        this.on('pointerover',this.handleOver.bind(this));
-        this.on('pointerout',this.handleOut.bind(this));
-    },
-
-    handleOver: function(){
-        UI.manageCursor(1,'UI');
-        var trayFrames = Engine.scene.textures.list['trayicons'].frames;
-        var hoverFrame = this.frame.name+'_hover';
-        if(trayFrames.hasOwnProperty(hoverFrame)){
-            this.initialFrame = this.frame.name;
-            this.setFrame(hoverFrame);
-        }
-    },
-
-    handleOut: function(){
-        UI.manageCursor(0,'UI');
-        if(this.initialFrame) this.setFrame(this.initialFrame);
     },
 
     handleClick: function(){

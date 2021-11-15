@@ -5,7 +5,6 @@ import BattleManager from './BattleManager'
 import CustomSprite from './CustomSprite'
 import Engine from './Engine'
 import Insect from './Insect'
-import OrientationPin from './OrientationPin'
 import UI from './UI'
 import Utils from '../shared/Utils'
 import World from '../shared/World'
@@ -33,7 +32,6 @@ var Item = new Phaser.Class({
         this.setTexture(atlas);
         this.setFrame(frame);
         this.setVisible(true);
-        this.orientationPin = new OrientationPin('item',this,itemData.atlas,itemData.frame);
 
         this.setTilePosition(data.x,data.y,true);
         // this.setOrigin(0.5);
@@ -51,7 +49,6 @@ var Item = new Phaser.Class({
         Engine.items[this.id] = this;
         Engine.entityManager.addToDisplayList(this);
 
-        this.manageOrientationPin();
         this.manageBehindness();
 
         if(itemData.insect && Utils.randomInt(1,10) > 8) new Insect(this.x,this.y);
@@ -64,22 +61,7 @@ var Item = new Phaser.Class({
     remove: function(){
         CustomSprite.prototype.remove.call(this);
         if(this.collides) Engine.collisions.delete(this.tileX,this.tileY);
-        this.orientationPin.hide();
         delete Engine.items[this.id];
-    },
-
-    manageOrientationPin: function(){
-        if(Engine.camera.cull([this]).length){
-            this.orientationPin.hide();
-        }else{
-            this.orientationPin.update(this.tileX,this.tileY);
-            // if(this.orientationPin.side){
-            //     var sideMap = Engine.orientationPins[this.orientationPin.side];
-            //     if(!sideMap.hasOwnProperty(this.itemType)) sideMap[this.itemType] = [];
-            //     sideMap[this.itemType].push(this.orientationPin);
-            // }
-            this.orientationPin.display();
-        }
     },
 
     manageBehindness: function(){
@@ -108,28 +90,6 @@ var Item = new Phaser.Class({
     handleClick: function(){
         if(!BattleManager.inBattle) Engine.processItemClick(this);
     },
-
-    setCursor: function(){
-        if(BattleManager.inBattle || Engine.inMenu) return;
-        UI.setCursor('item');
-        UI.tooltip.updateInfo('pickupItem',{id:this.itemType});
-        UI.tooltip.display();
-    },
-
-    handleOver: function(){
-        UI.manageCursor(1,'item',this);
-        if(!this.hollowed) this.setFrame(this.inFrame);
-        Engine.hideMarker();
-        // console.log(this.depth);
-    },
-
-    handleOut: function(){
-        UI.manageCursor(0,'item');
-        //UI.setCursor();
-        UI.tooltip.hide();
-        if(!this.hollowed) this.setFrame(this.outFrame);
-        Engine.showMarker();
-    }
 });
 
 export default Item

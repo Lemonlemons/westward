@@ -27,7 +27,6 @@ var NPC = new Phaser.Class({
             if(!callbacks.hasOwnProperty(field)) continue;
             if(field in data) callbacks[field].call(this,data[field]);
         }
-        this.manageOrientationPin();
     },
 
 
@@ -41,34 +40,6 @@ var NPC = new Phaser.Class({
             Engine.processNPCClick(this);
         }
     },
-
-    setCursor: function(){
-        if(!BattleManager.inBattle && Engine.inMenu) return;
-        var cursor;
-        if(BattleManager.inBattle) {
-            if(this.dead){
-                cursor = 'default';
-            }else{
-                cursor = (Utils.nextTo(Engine.player,this) ? 'melee' : Engine.player.getRangedCursor());
-            }
-        }else{
-            cursor = (this.dead ? 'item' : 'combat');
-        }
-        UI.setCursor(cursor);
-        UI.tooltip.updateInfo('NPC',{type:this.entityType, id:this.id});
-        UI.tooltip.display();
-    },
-
-    handleOver: function(){
-        Moving.prototype.handleOver.call(this);
-        UI.manageCursor(1,'npc',this);
-    },
-
-    handleOut: function(){
-        Moving.prototype.handleOut.call(this);
-        UI.manageCursor(0,'npc');
-        UI.tooltip.hide();
-    }
 });
 
 export default NPC

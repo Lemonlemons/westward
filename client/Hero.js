@@ -122,8 +122,6 @@ let Hero = new Phaser.Class({
 
         if(data.x >= 0 && data.y >= 0) this.teleport(data.x,data.y);
 
-        Engine.updateAllOrientationPins();
-
         Engine.firstSelfUpdate = false;
     },
 
@@ -176,12 +174,6 @@ let Hero = new Phaser.Class({
         return this.getNbAmmo();
     },
 
-    getRangedCursor: function(){
-        let rangedw = this.getEquippedItemID('rangedw');
-        if(rangedw === -1) return 'bow';
-        return (itemsData[rangedw].container_type === 'bullets' ? 'gun' : 'bow');
-    },
-
     getStat: function(stat){
         return this.stats[stat];
     },
@@ -225,14 +217,6 @@ let Hero = new Phaser.Class({
             this.history.unshift([Date.now(),notif]);
         },this);
         this.updateEvents.add('history');
-    },
-
-    handleOver: function(){
-        Moving.prototype.handleOver.call(this);
-    },
-
-    handleOut: function(){
-        Moving.prototype.handleOut.call(this);
     },
 
     updateAmmo: function(ammo){

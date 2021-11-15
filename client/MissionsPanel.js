@@ -100,14 +100,6 @@ function MissionSlot(x,y,width,height){
     this.zone = UI.scene.add.zone(this.x,this.y,width,height);
     this.zone.setInteractive();
     this.zone.setOrigin(0);
-    this.zone.on('pointerover',function(){
-        UI.tooltip.updateInfo('mission',this.missionData);
-        UI.tooltip.display();
-    }.bind(this));
-    this.zone.on('pointerout',function(){
-        UI.tooltip.hide();
-        UI.setCursor();
-    }.bind(this));
 
     this.content = [this.name, this.zone];
 

@@ -32,12 +32,6 @@ function BuildPanel(x,y,width,height,title,invisible){
     this.nextPage = UI.scene.add.sprite(this.pagetxts[3].x+this.pagetxts[3].width+3, 0,'UI','arrow');
 
     this.nextPage.setInteractive();
-    this.nextPage.on('pointerover',function(){
-        this.nextPage.setFrame('arrow_lit');
-    }.bind(this));
-    this.nextPage.on('pointerout',function(){
-        this.nextPage.setFrame('arrow');
-    }.bind(this));
     this.nextPage.on('pointerdown',function(){
         this.nextPage.setFrame('arrow_pressed');
     }.bind(this));
@@ -48,12 +42,6 @@ function BuildPanel(x,y,width,height,title,invisible){
     }.bind(this));
 
     this.previousPage.setInteractive();
-    this.previousPage.on('pointerover',function(){
-        this.previousPage.setFrame('arrow_lit');
-    }.bind(this));
-    this.previousPage.on('pointerout',function(){
-        this.previousPage.setFrame('arrow');
-    }.bind(this));
     this.previousPage.on('pointerdown',function(){
         this.previousPage.setFrame('arrow_pressed');
     }.bind(this));
@@ -171,15 +159,6 @@ function BuildSlot(x,y,width,height){
     this.zone = UI.scene.add.zone(this.x,this.y,width,height);
     this.zone.setInteractive();
     this.zone.setOrigin(0);
-    this.zone.on('pointerover',function(){
-        UI.tooltip.updateInfo('buildingdata',{id:this.bldID});
-        UI.tooltip.display();
-        UI.setCursor('item');
-    }.bind(this));
-    this.zone.on('pointerout',function(){
-        UI.tooltip.hide();
-        UI.setCursor();
-    }.bind(this));
     this.zone.on('pointerup',Engine.bldClick.bind(this));
 
     this.content = [this.name, this.zone];

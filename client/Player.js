@@ -4,7 +4,6 @@
 import BattleManager from './BattleManager'
 import Engine from './Engine'
 import Moving from './Moving'
-import OrientationPin from './OrientationPin'
 
 var Player = new Phaser.Class({
 
@@ -31,7 +30,6 @@ var Player = new Phaser.Class({
 
         this.destinationAction = null;
 
-        this.orientationPin = new OrientationPin('player',this);
         this.flipPrint = false;
 
         this.battleBoxData = {
@@ -50,11 +48,10 @@ var Player = new Phaser.Class({
         this.name = 'Player ' + this.id;
         this.setPosition(data.x, data.y);
         this.updateBubblePosition();
-        this.manageOrientationPin();
     },
 
     update: function (data) {
-        console.log('updating player');
+        // console.log('updating player');
         Moving.prototype.update.call(this, data);
         if (data.x >= 0 && data.y >= 0) this.teleport(data.x, data.y);
 
@@ -71,10 +68,9 @@ var Player = new Phaser.Class({
 
         this.firstUpdate = false;
     },
-
+ 
     remove: function () {
         CustomSprite.prototype.remove.call(this);
-        this.orientationPin.hide();
         delete Engine.players[this.id];
     },
 

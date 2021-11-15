@@ -43,14 +43,6 @@ function BuildingTitle(x,y){
         e.setScrollFactor(0);
         e.setDisplayOrigin(0,0);
         e.setVisible(false);
-
-        /*e.setInteractive();
-        e.on('pointerover',function(){
-            UI.manageCursor(1,'UI');
-        });
-        e.on('pointerout',function(){
-            UI.manageCursor(0,'UI');
-        });*/
     },this);
 
     this.exit = UI.scene.add.sprite(0,yr+30,'UI','exit_icon');
@@ -59,16 +51,6 @@ function BuildingTitle(x,y){
     this.exit.setVisible(false);
     this.exit.setInteractive();
     this.exit.on('pointerup',Engine.leaveBuilding);
-    var exit_ = this.exit;
-    this.exit.on('pointerover',function(){
-        UI.tooltip.updateInfo('free',{body:'Exit'});
-        UI.tooltip.display();
-        exit_.setFrame('exit_icon_on');
-    });
-    this.exit.on('pointerout',function(){
-        exit_.setFrame('exit_icon');
-        UI.tooltip.hide();
-    });
 
     this.repair = UI.scene.add.sprite(0,yr+30,'UI','hammer_icon');
     this.repair.setDepth(this.depth+1);
@@ -79,15 +61,6 @@ function BuildingTitle(x,y){
         Engine.repairPanel.display();
     });
     var repair_ = this.repair;
-    this.repair.on('pointerover',function(){
-        UI.tooltip.updateInfo('free',{body:'Repair'});
-        UI.tooltip.display();
-        repair_.setAngle(-15);
-    });
-    this.repair.on('pointerout',function(){
-        repair_.setAngle(0);
-        UI.tooltip.hide();
-    });
 
     this.invrect = UI.scene.add.image(1024,0,'UI','invisible');
     this.invrect.setInteractive();

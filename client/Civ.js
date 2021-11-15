@@ -4,7 +4,6 @@
 import CustomSprite from './CustomSprite'
 import Engine from './Engine'
 import NPC from './NPC'
-import OrientationPin from './OrientationPin'
 
 import civsData from '../assets/data/civs.json'
 
@@ -15,7 +14,6 @@ var Civ = new Phaser.Class({
     initialize: function Civ() {
         NPC.call(this);
         this.entityType = 'civ';
-        this.orientationPin = new OrientationPin('civ',this);
     },
 
     setUp: function(data){
@@ -50,8 +48,6 @@ var Civ = new Phaser.Class({
         this.faceOrientation();
         this.footprintsFrame = 0;
         this.printsVertOffset = 10;
-
-        //this.manageOrientationPin();
     },
 
     processMeleeAttack: function(facing){
@@ -67,8 +63,6 @@ var Civ = new Phaser.Class({
     remove: function(){
         //console.log('remove ',this.id,'(',this.tileX,',',this.tileY,',',this.chunk,',)');
         CustomSprite.prototype.remove.call(this);
-        this.orientationPin.hide();
-        this.orientationPin.reset();
         delete Engine.civs[this.id];
     },
 

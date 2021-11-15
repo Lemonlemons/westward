@@ -53,7 +53,7 @@ Chunk.prototype.draw = function(){
             this.drawTile(x, y, name);
         },this);
     },this);
-    if(this.tiles.length > 700) console.warn(this.tiles.length); // TODO: remove eventually
+    // if(this.tiles.length > 700) console.warn(this.tiles.length); // TODO: remove eventually
 
     // Decor
     this.decor.forEach(function (data) {
@@ -77,27 +77,22 @@ Chunk.prototype.hasWater = function(x,y){
 };
 
 Chunk.prototype.drawTile = function(x,y,tile){
-    /*if(BLIT){ // TODO: remove?
-        Editor.ground.create(x * World.tileWidth, y * World.tileHeight, tile);
-        return;
-    }*/
     var sprite = this.scene.add.image(x*World.tileWidth,y*World.tileHeight,'tileset',tile);
     sprite.setDisplayOrigin(0,0);
     sprite.tileID = tile;
     this.tiles.push(sprite);
     if(this.getAtlasData(tile,'collides',true)) this.addCollision(x,y);
-    this.postDrawTile(x,y,tile,sprite);
 };
 
 Chunk.prototype.getAtlasData = function(image,data,longname){
     if(longname){
-        return this.tilesetData.atlas[image][data];
+        return this.tilesetData.atlas[image].customData[data];
     }else {
         if (!(image in this.tilesetData.shorthands)){
             console.warn('Unknown shorthand',image);
             return false;
         }
-        return this.tilesetData.atlas[this.tilesetData.shorthands[image]][data];
+        return this.tilesetData.atlas[this.tilesetData.shorthands[image]].customData[data];
     }
 };
 

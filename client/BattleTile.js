@@ -92,20 +92,6 @@ var BattleTile = new Phaser.Class({
 
     // ### INPUT ###
 
-    setCursor: function(){
-        // UI.setCursor();
-    },
-
-    handleOver: function(){
-        // UI.manageCursor(1,'tile',this);
-        if(!this.active) this.setFrame(1);
-    },
-
-    handleOut: function(){
-        // UI.manageCursor(0,'tile');
-        if(!this.active) this.setFrame(this.baseFrame);
-    },
-
     handleClick: function(pointer){
         if(BattleManager.inBattle){
             BattleManager.processTileClick(this,pointer);

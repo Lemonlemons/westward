@@ -19,8 +19,6 @@ var ItemSprite = new Phaser.Class({
         this.setVisible(false);
         this.setDepth(1);
         this.showTooltip = true;
-
-        this.on('pointerover',this.handleOver.bind(this));
     },
 
     setUp: function(id,data,callback){
@@ -51,16 +49,6 @@ var ItemSprite = new Phaser.Class({
     hide: function(){
         this.setVisible(false);
     },
-
-    handleOver: function(){
-        if(this.showTooltip) {
-            if(this.itemID == -1){
-                UI.tooltip.updateInfo('slot', {slot: this.slot});
-            }else {
-                UI.tooltip.updateInfo('item', {id: this.itemID});
-            }
-        }
-    }
 });
 
 export default ItemSprite

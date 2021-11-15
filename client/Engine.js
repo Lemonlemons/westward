@@ -269,9 +269,9 @@ Engine.create = function(){
     Engine.mapDataLocation = Boot.mapDataLocation;
 
     Engine.tilesetData = {};
-    Engine.tilesetData.atlas = Engine.scene.cache.json.get('tileset').frames;
-    Engine.tilesetData.config = Engine.scene.cache.json.get('tileset').config;
-    Engine.tilesetData.shorthands = Engine.scene.cache.json.get('tileset').shorthands;
+    Engine.tilesetData.atlas = this.textures.get('tileset').frames;
+    Engine.tilesetData.config = this.textures.get('tileset').customData.config;
+    Engine.tilesetData.shorthands = this.textures.get('tileset').customData.shorthands;
 
     Engine.chunks = {}; // holds references to the containers containing the chunks
     Engine.displayedChunks = [];
@@ -308,8 +308,6 @@ Engine.create = function(){
     Engine.entityManager.registerEntityType('civ',Civ,Engine.civs);
     Engine.entityManager.registerEntityType('remain',Remains,Engine.remains);
 
-    Engine.orientationPins = [];
-
     Engine.debug = true;
     Engine.showHero = true;
     Engine.showGrid = false;
@@ -329,7 +327,7 @@ Engine.create = function(){
     Engine.scene.input.on('pointermove', Engine.trackMouse);
 
     // TODO: move these to classes
-    Engine.scene.input.setPollAlways();
+    // Engine.scene.input.setPollAlways();
     Engine.scene.input.on('pointerover', Engine.handleOver);
     Engine.scene.input.on('pointerout', Engine.handleOut);
     Engine.scene.input.on('drag', Engine.handleDrag);
@@ -338,13 +336,13 @@ Engine.create = function(){
     Engine.addWASD();
     Engine.camLock = false;
 
-    Engine.mouseIn = true;
-    Engine.scene.game.canvas.onmouseenter = function(){
-        Engine.mouseIn = true;
-    };
-    Engine.scene.game.canvas.onmouseout = function(){
-        Engine.mouseIn = false;
-    };
+    // Engine.mouseIn = true;
+    // Engine.scene.game.canvas.onmouseenter = function(){
+    //     Engine.mouseIn = true;
+    // };
+    // Engine.scene.game.canvas.onmouseout = function(){
+    //     Engine.mouseIn = false;
+    // };
 
     Engine.collisions = new SpaceMap();
     Engine.overlay = new SpaceMap();
@@ -646,60 +644,9 @@ Engine.manageDeath = function(){
     Engine.dead = true;
 };
 
-Engine.updateAllOrientationPins = function(){
-    Engine.orientationPins.forEach(function(p){
-        p.hide();
-    });
-    Engine.entityManager.displayLists['animal'].forEach(function(aid){
-        Engine.animals[aid].manageOrientationPin();
-    });
-    Engine.entityManager.displayLists['civ'].forEach(function(cid){
-        Engine.civs[cid].manageOrientationPin();
-    });
-    /*Engine.orientationPins = {
-        'top': {},
-        'left': {},
-        'right': {},
-        'bottom': {}
-    };*/
-    Engine.entityManager.displayLists['item'].forEach(function(iid){
-        Engine.items[iid].manageOrientationPin();
-    });
-    // Engine.pruneOrientationPins();
-    Engine.entityManager.displayLists['player'].forEach(function(pid){
-        Engine.players[pid].manageOrientationPin();
-    });
-};
-
 Engine.manageRespawn = function(){
     Engine.showMarker();
     Engine.dead = false;
-    Engine.updateAllOrientationPins();
-};
-
-Engine.pruneOrientationPins = function(){
-    // TODO: complete
-    for(var side in Engine.orientationPins){
-        if(side != 'right') continue; // TODO: remove
-        for(var item in Engine.orientationPins[side]){
-            var pins = Engine.orientationPins[side];
-            for(var i = 0; i < pins.length; i++){
-                var base = pins[i];
-                for(var j = i+1; j < pins.length; j++) {
-                    var other = pins[j];
-                    // TODO: conf
-                    var d = Math.abs(base.y - other.y);
-                    console.warn(d);
-                    if(d < 20){
-                        other.hide();
-                        pins.splice(j,1);
-                        base += d/2;
-                    }
-                }
-                // if(i >= pins.length) break;
-            }
-        }
-    }
 };
 
 Engine.updateBehindness = function(){
@@ -855,11 +802,6 @@ Engine.makeUI = function(){
     bug.setDepth(10);
 
     bug.on('pointerup',Engine.snap);
-    bug.on('pointerover',function(){
-        UI.tooltip.updateInfo('free',{body:'Snap a pic of a bug'});
-        UI.tooltip.display();
-    });
-    bug.on('pointerout',UI.tooltip.hide.bind(UI.tooltip));
 
     Engine.camlockIcon = UI.scene.add.image(850, 50, 'camlock');
     Engine.camlockIcon.setScrollFactor(0);
@@ -867,7 +809,6 @@ Engine.makeUI = function(){
     Engine.camlockIcon.setDepth(10);
 
     Engine.camlockIcon.on('pointerup',Engine.toggleCamLock);
-    Engine.camlockIcon.on('pointerout',UI.tooltip.hide.bind(UI.tooltip));
 
     Engine.miniMap = new MiniMap();
     Engine.setlCapsule = new SettlementCapsule(950,3);
@@ -878,7 +819,6 @@ Engine.makeUI = function(){
     Engine.face = UI.scene.add.sprite(x,y,'faces',0).setScrollFactor(0).setDepth(3);
 
     Engine.lifeCapsule = new Capsule(UI.scene,37,3,'UI','heart');
-    Engine.lifeCapsule.setHoverText(UI.tooltip,'Vitality',UI.textsData['health_help']);
     Engine.lifeCapsule.removeLeft();
     Engine.lifeCapsule.display();
     Engine.lifeCapsule.update = function(){
@@ -886,7 +826,6 @@ Engine.makeUI = function(){
     };
 
     Engine.goldCapsule = new Capsule(UI.scene,152,3,'UI','gold');
-    Engine.goldCapsule.setHoverText(UI.tooltip,'Gold',UI.textsData['gold_help']);
     Engine.goldCapsule.display();
     Engine.goldCapsule.update = function(){
         this.setText(Engine.player.gold || 0); // TODO: add max
@@ -894,7 +833,6 @@ Engine.makeUI = function(){
     Engine.goldCapsule.update();
 
     Engine.bagCapsule = new Capsule(UI.scene,228,3,'UI','smallpack');
-    Engine.bagCapsule.setHoverText(UI.tooltip,'Backpack',UI.textsData['backpack_help']);
     Engine.bagCapsule.display();
     Engine.bagCapsule.update = function(){
         this.setText(Engine.player.inventory.size+'/'+Engine.player.inventory.maxSize);
@@ -902,14 +840,12 @@ Engine.makeUI = function(){
     Engine.bagCapsule.update();
 
     Engine.vigorCapsule = new Capsule(UI.scene,50,30,'UI','goldenheart');
-    Engine.vigorCapsule.setHoverText(UI.tooltip,'Vigor',UI.textsData['vigor_help']);
     Engine.vigorCapsule.display();
     Engine.vigorCapsule.update = function(){
         this.setText(Engine.player.getStatValue('vigor')+'%');
     };
 
     Engine.foodCapsule = new Capsule(UI.scene,140,30,'UI','bread');
-    Engine.foodCapsule.setHoverText(UI.tooltip,'Food',UI.textsData['food_help']);
     Engine.foodCapsule.display();
     Engine.foodCapsule.update = function(){
         this.setText(Engine.player.getStatValue('food')+'%');
@@ -1217,7 +1153,6 @@ Engine.makeProductionMenu = function(){
     var productionPanel = new ProductionPanel(x,y,w,h);
     productionPanel.addButton(w-30, 8, 'blue','help',null,'',UI.textsData['prod_help'],'prod_help');
     var gold = productionPanel.addCapsule('gold',20,20,'999','gold');
-    gold.setHoverText(UI.tooltip,'Building gold',UI.textsData['shopgold_help']);
     production.addPanel('production',productionPanel);
 
     var action = new ShopPanel(212,440,300,100,'Take',true); // true = not shop, hack
@@ -1264,7 +1199,6 @@ Engine.makeConstructionMenu = function(){
     progress.addButton(w-30, 8, 'blue','help',null,'',UI.textsData['progress_help'],'progress_help');
     constr.addPanel('progress',progress);
     var gold = progress.addCapsule('gold',20,-9,'999','gold');
-    gold.setHoverText(UI.tooltip,'Building gold',UI.textsData['shopgold_help']);
 
     var aw = 300;
     var action = constr.addPanel('action',new ShopPanel(212,390,aw,100,'Give',true),true);
@@ -1781,19 +1715,9 @@ Engine.getIngredientsPanel = function(){
 Engine.toggleCamLock = function(){
     if(Engine.camLock){
         Engine.camera.stopFollow();
-        Engine.camlockIcon.on('pointerover',function(){
-            var msg = 'Free camera';
-            UI.tooltip.updateInfo('free',{body: msg});
-            UI.tooltip.display();
-        });
         Engine.camlockIcon.setTexture('camunlock');
     }else{
-        Engine.camera.startFollow(Engine.player);
-        Engine.camlockIcon.on('pointerover',function(){
-            var msg = 'Camera locked on player';
-            UI.tooltip.updateInfo('free',{body: msg});
-            UI.tooltip.display();
-        });
+        Engine.focusPlayer();
         Engine.camlockIcon.setTexture('camlock');
     }
     Engine.camLock = !Engine.camLock;
@@ -1845,7 +1769,6 @@ Engine.updateEnvironment = function(){
     var l = (tl.x-World.chunkWidth)*32;
     var t = (tl.y-World.chunkHeight)*32;
     Engine.camera.setBounds(l,t,World.chunkWidth*3*32,World.chunkHeight*3*32);
-    console.log(Engine.camera.getBounds());
 };
 
 Engine.displayChunk = function(id){
@@ -1913,22 +1836,20 @@ Engine.handleKeyboard = function(event){
 };
 
 Engine.handleDown = function(pointer,objects){
-    UI.downCursor();
     if(objects.length > 0 && objects[0].handleDown)objects[0].handleDown(pointer);
 };
 
 Engine.handleClick = function(pointer,objects){
-    UI.upCursor();
     if(objects.length > 0){
         for(var i = 0; i < Math.min(objects.length,2); i++){ // disallow bubbling too deep, only useful in menus (i.e. shallow)
             if(objects[i].handleClick) objects[i].handleClick(pointer);
         }
     }else{
         if(!BattleManager.inBattle && !Engine.dead) {
-            if(Engine.bldRect){
+            if(Engine.bldRect) {
                 Engine.bldUnclick();
-            }else {
-                if(Engine.inMenu && !Engine.currentMenu.allowWalk) return;
+            } else {
+                if (Engine.inMenu && !Engine.currentMenu.allowWalk) return;
                 Engine.moveToClick(pointer);
             }
         }
@@ -1970,14 +1891,17 @@ Engine.computePath = function(position,nextTo){
     var x = position.x;
     var y = position.y;
     if(x === undefined || y === undefined) console.warn('Pathfiding to undefined coordinates');
-    // if(!nextTo && Engine.checkCollision(x,y)) return;
+
     var start = Engine.player.getPFstart();
     if(Engine.player.moving) Engine.player.stop();
 
     var path = Engine.pathFinder.findPath(start,{x:x,y:y},false,nextTo); // seek = false, nextTo = true
     if(!path) {
-        if(!Engine.checkCollision(x,y)) Engine.player.talk('It\'s too far!');
-        // Engine.player.talk('I can\'t go there!');
+        if(!Engine.checkCollision(x,y)) {
+            Engine.player.talk('It\'s too far!');
+        } else {
+            Engine.player.talk('I can\'t go there!');
+        }
         return;
     }
 
@@ -1987,41 +1911,43 @@ Engine.computePath = function(position,nextTo){
 
     if(Engine.player.destinationAction && Engine.player.destinationAction.type != 1) path.pop();
     Client.sendPath(path,Engine.player.destinationAction);
-    Engine.player.queuePath(path);
+    Engine.player.move(path);
 };
 
-Engine.updatePosition = function(player){
-    if(player.x > player.previousPosition.x){ // right
-        player.orientation = 'right';
-    }else if(player.x < player.previousPosition.x) { // left
-        player.orientation = 'left';
-    }else if(player.y > player.previousPosition.y) { // down
-        player.orientation = 'down';
-    }else if(player.y < player.previousPosition.y) { // up
-        player.orientation = 'up';
-    }
+// Engine.updatePosition = function(player){
+//     if(player.x > player.previousPosition.x){ // right
+//         player.orientation = 'right';
+//     }else if(player.x < player.previousPosition.x) { // left
+//         player.orientation = 'left';
+//     }else if(player.y > player.previousPosition.y) { // down
+//         player.orientation = 'down';
+//     }else if(player.y < player.previousPosition.y) { // up
+//         player.orientation = 'up';
+//     }
 
-    player.previousPosition = {
-        x: player.x,
-        y: player.y
-    };
-    player.tileX = Math.floor(player.x/Engine.tileWidth);
-    player.tileY = Math.floor(player.y/Engine.tileHeight);
-    if(player.id == Engine.player.id) {
-        player.chunk = Utils.tileToAOI({x: player.tileX, y: player.tileY});
-        if (player.chunk != player.previousChunk) Engine.updateEnvironment();
-        player.previousChunk = player.chunk;
-    }
-};
+//     player.previousPosition = {
+//         x: player.x,
+//         y: player.y
+//     };
+//     player.tileX = Math.floor(player.x/Engine.tileWidth);
+//     player.tileY = Math.floor(player.y/Engine.tileHeight);
+//     if(player.id == Engine.player.id) {
+//         player.chunk = Utils.tileToAOI({x: player.tileX, y: player.tileY});
+//         if (player.chunk != player.previousChunk) {
+//             Engine.updateEnvironment();
+//             player.previousChunk = player.chunk;
+//         }
+//     }
+// };
 
 Engine.getMouseCoordinates = function(pointer){
     // +16 so that the target tile is below the middle of the cursor
     var pxX = Engine.camera.scrollX + pointer.x;// + 16;
     var pxY = Engine.camera.scrollY + pointer.y;// + 16;
-    if(!Engine.debugMarker && !BattleManager.inBattle){
-        pxX += 16;
-        pxY += 16;
-    }
+    // if(!Engine.debugMarker && !BattleManager.inBattle){
+    //     pxX += 16;
+    //     pxY += 16;
+    // }
     var tileX = Math.floor(pxX/Engine.tileWidth);
     var tileY = Math.floor(pxY/Engine.tileHeight);
     Engine.lastPointer = {x:pointer.x,y:pointer.y};
@@ -2057,10 +1983,10 @@ Engine.updateMarker = function(tile){
     if(Engine.bldRect) Engine.updateBldRect();
     if(tile.x != Engine.marker.previousTile.x || tile.y != Engine.marker.previousTile.y){
         Engine.marker.previousTile = tile;
-        if(Engine.checkCollision(tile.x,tile.y)){
-            if(Engine.debugMarker) Engine.marker.setFrame(1);
+        if(Engine.debugMarker && Engine.checkCollision(tile.x,tile.y)){
+            Engine.marker.setFrame(1);
         }else{
-            if(Engine.debugMarker) Engine.marker.setFrame(0);
+            Engine.marker.setFrame(0);
         }
     }
 };
@@ -2082,36 +2008,35 @@ Engine.updateSelf = function(data){
 };
 
 //UPDT
-Engine.update = function(){
-    if(Engine.camLock) return;
-    var p = Engine.scene.input.activePointer.position;
-    if(p.x == 0 && p.y == 0) return;
-    var margin = 10;
-    var dx = 0;
-    var dy = 0;
-    if(p.x < margin || Engine.cursors.left.isDown ||(Engine.WASD.A.isDown && !Engine.chatBar.displayed)){
-        dx = -1;
-    }else if(p.x > UI.getGameWidth() - margin || Engine.cursors.right.isDown || (Engine.WASD.D.isDown && !Engine.chatBar.displayed)){
-        dx = 1;
-    }
-    if(p.y < margin || Engine.cursors.up.isDown || (Engine.WASD.W.isDown && !Engine.chatBar.displayed)){
-        dy = -1;
-    }else if(p.y > UI.getGameHeight() - margin || Engine.cursors.down.isDown || (Engine.WASD.S.isDown && !Engine.chatBar.displayed)){
-        dy = 1;
-    }
-    if(dx == 0 && dy == 0) return;
-    Engine.scrollCamera(dx,dy);
-    Engine.updateAllOrientationPins();
-};
+// Engine.update = function(){
+//     if(Engine.camLock) return;
+//     var p = Engine.scene.input.activePointer.position;
+//     if(p.x == 0 && p.y == 0) return;
+//     var margin = 10;
+//     var dx = 0;
+//     var dy = 0;
+//     if(p.x < margin || Engine.cursors.left.isDown ||(Engine.WASD.A.isDown && !Engine.chatBar.displayed)){
+//         dx = -1;
+//     }else if(p.x > UI.getGameWidth() - margin || Engine.cursors.right.isDown || (Engine.WASD.D.isDown && !Engine.chatBar.displayed)){
+//         dx = 1;
+//     }
+//     if(p.y < margin || Engine.cursors.up.isDown || (Engine.WASD.W.isDown && !Engine.chatBar.displayed)){
+//         dy = -1;
+//     }else if(p.y > UI.getGameHeight() - margin || Engine.cursors.down.isDown || (Engine.WASD.S.isDown && !Engine.chatBar.displayed)){
+//         dy = 1;
+//     }
+//     if(dx == 0 && dy == 0) return;
+//     Engine.scrollCamera(dx,dy);
+// };
 
-Engine.scrollCamera = function(dx,dy){
-    var speed = 10;
-    dx *= 10;
-    dy *= 10;
-    var x = Engine.camera.worldView.x;
-    var y = Engine.camera.worldView.y;
-    Engine.camera.setScroll(x+dx, y+dy);
-}
+// Engine.scrollCamera = function(dx,dy){
+//     var speed = 10;
+//     dx *= 10;
+//     dy *= 10;
+//     var x = Engine.camera.worldView.x;
+//     var y = Engine.camera.worldView.y;
+//     Engine.camera.setScroll(x+dx, y+dy);
+// }
 
 //TODO: compute once
 Engine.getAnimalData = function(type){
@@ -2249,7 +2174,6 @@ Engine.enterBuilding = function(id){
     }
 
     mainMenu.display();
-    building.handleOut();
 
     Engine.buildingTitle.setText(buildingData.name);
     var owner = Engine.currentBuiling.isOwned() ? 'Your' : (Engine.currentBuiling.ownerName || 'Player')+'\'s';
@@ -2402,7 +2326,6 @@ Engine.debugQT = function(quads){
     });
 };
 
-Chunk.prototype.postDrawTile = function(){}; // Used in editor
 Chunk.prototype.postDrawImage = function(x,y,image,sprite){
     var hover = this.getAtlasData(image,'hover');
     if(!hover) return;
@@ -2415,17 +2338,15 @@ Chunk.prototype.postDrawImage = function(x,y,image,sprite){
         sprite.formerFrame = sprite.frame.name;
         sprite.setFrame(hover);
         Engine.hideMarker();
-        UI.setCursor('item'); // TODO: use UI.manageCursor() instead?
     });
     sprite.on('pointerout',function(){
         UI.hoverFlower--;
         sprite.setFrame(sprite.formerFrame);
         if(UI.hoverFlower <= 0) {
             Engine.showMarker();
-            UI.setCursor();
         }
     });
-    sprite.on('pointerdown',function(){
+    sprite.on('pointerup',function(){
         if(!BattleManager.inBattle) Engine.processItemClick(sprite,true);
     });
 };
@@ -2463,10 +2384,6 @@ window.debugPlayer = function(){
 
 window.debugEngine = function(){
     console.log(Engine);
-};
-
-window.debugPointer = function(){
-    console.log(Engine.scene.input.activePointer);
 };
 
 window.debugCamera = function(){

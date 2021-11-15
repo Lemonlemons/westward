@@ -91,8 +91,8 @@ Main config file of the game, see https://github.com/Jerenaux/westward/wiki/Conf
     },
     client: { // config packet sent to the clients for client-side configuration
         boot:{
-            autoBoot: true, // skip screen with "play" button por not
-            forceNewPlayer: false, // disallow loading existing players (for testing and debugging)
+            autoBoot: false, // skip screen with "play" button por not
+            forceNewPlayer: true, // disallow loading existing players (for testing and debugging)
             offerTutorial: true // allow players to select the tutorial or not
         },
         config: { // Will be in Engine.config

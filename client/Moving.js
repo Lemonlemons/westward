@@ -56,7 +56,7 @@ var Moving = new Phaser.Class({
 
     // Updates the position; primarily called as the entity moves around and has moved by at least 1 tile
     updatePosition: function(x,y){ // x and y are tile cordinates
-        this.updatePreviousPosition();
+        // this.updatePreviousPosition();
         this.setTilePosition(x,y);
         this.updateDepth();
     },
@@ -77,25 +77,6 @@ var Moving = new Phaser.Class({
         this.setDepth(newdepth); // 1.6 to be greatet than Item's 1.5
     },
 
-    manageOrientationPin: function(){
-        // if(this.isHero) return;
-        if(!this.orientationPin) return;
-
-        if(this.dead) {
-            this.orientationPin.hide();
-            return;
-        }
-
-        // var c = this.getCenter();
-        // if(Engine.isInView(c.x,c.y)) {
-        if(Engine.camera.cull([this]).length){
-            this.orientationPin.hide();
-        }else{
-            this.orientationPin.update(this.tileX,this.tileY);
-            this.orientationPin.display();
-        }
-    },
-
     move: function(path){
         //if(this.isHero) console.log('move from (',path[0][0],',',path[0][1],') to (',path[path.length-1][0],',',path[path.length-1][1],')');
         if(!path || path.length <= 1) {
@@ -111,11 +92,12 @@ var Moving = new Phaser.Class({
             var sy = path[i][1];
             var ex = path[i+1][0];
             var ey = path[i+1][1];
-            var time = PFUtils.getDuration(sx,sy,ex,ey); // in sec
+            // var time = PFUtils.getDuration(sx,sy,ex,ey); // in sec
             tweens.push({
                 targets: this,
-                x: {value: ex*Engine.tileWidth, duration: time*1000},
-                y: {value: ey*Engine.tileHeight, duration: time*1000},
+                x: ex*Engine.tileWidth,
+                y: ey*Engine.tileHeight,
+                duration: 175,
                 onStartParams: [sx,sy,ex,ey],
                 onStart: this.tileByTilePreUpdate.bind(this),
                 onComplete: this.tileByTilePostUpdate.bind(this)
@@ -125,17 +107,17 @@ var Moving = new Phaser.Class({
         this.moving = true;
         this.movement = Engine.scene.tweens.timeline({
             tweens: tweens,
-            onUpdate: this.frameByFrameUpdate.bind(this),
+            // onUpdate: this.frameByFrameUpdate.bind(this),
             onComplete: this.endMovement.bind(this)
         });
     },
 
-    frameByFrameUpdate: function(){
-        if(this.bubble) this.updateBubblePosition();
-    },
+    // frameByFrameUpdate: function(){
+    //     // if(this.bubble) this.updateBubblePosition();
+    // },
 
     updateBubblePosition: function(){
-        this.bubble.updatePosition(this.x-this.bubbleOffsetX,this.y-this.bubbleOffsetY,this.depth);
+        // this.bubble.updatePosition(this.x-this.bubbleOffsetX,this.y-this.bubbleOffsetY,this.depth);
     },
 
     computeOrientation: function(fromX,fromY,toX,toY){
@@ -164,15 +146,7 @@ var Moving = new Phaser.Class({
 
         if(this.orientation != this.previousOrientation) {
             this.previousOrientation = this.orientation;
-            // console.warn(this.getTextureName() + '_move_' + this.orientation);
             this.play(this.getTextureName() + '_move_' + this.orientation);
-            // console.warn(this);
-            // console.warn(this.anims.currentAnim.key, this.anims.currentFrame.index);
-        }
-
-        if(this.isHero){
-            var position = Engine.getMouseCoordinates(Engine.lastPointer);
-            Engine.updateMarker(position.tile);
         }
     },
 
@@ -183,8 +157,6 @@ var Moving = new Phaser.Class({
         var ty = Math.floor(this.y/Engine.tileHeight);
         this.updatePosition(tx,ty);
 
-        //if(this.isActiveFighter) Engine.updateGrid();
-
         var overlayOffsetX = this.overlayOffset ? this.overlayOffset[0] : 0;
         var overlayOffsetY = this.overlayOffset ? this.overlayOffset[1] : 0;
         if(Engine.overlay.get(tx+overlayOffsetX,ty+overlayOffsetY)){
@@ -193,19 +165,16 @@ var Moving = new Phaser.Class({
             this.unhollow();
         }
         
-        this.leaveFootprint();
-        this.playSound();
+        // this.leaveFootprint();
+        // this.playSound();
         if(this.isHero){
-            Engine.updateAllOrientationPins();
             if(Engine.miniMap) Engine.miniMap.follow();
-        }else{
-            this.manageOrientationPin();
         }
 
-        if(this.flagForStop || (this.stopPos && this.stopPos.x == tx && this.stopPos.y == ty)){
-            this.movement.stop();
-            this.endMovement(); // TODO: have it called automatically by stop()
-        }
+        // if(this.flagForStop || (this.stopPos && this.stopPos.x == tx && this.stopPos.y == ty)){
+        //     this.movement.stop();
+        //     this.endMovement(); // TODO: have it called automatically by stop()
+        // }
     },
 
     teleport: function(x,y){
@@ -266,7 +235,9 @@ var Moving = new Phaser.Class({
     },
 
     stop: function(){
-        if(this.moving) this.flagForStop = true;
+        // if(this.moving) this.flagForStop = true;
+        this.movement.stop();
+        this.endMovement(); // TODO: have it called automatically by stop()
     },
 
     queuePath: function(path){
@@ -281,7 +252,7 @@ var Moving = new Phaser.Class({
         if(!this.active) return; // quick fix
         if(this.dead) return;
         this.moving = false;
-        this.flagForStop = false;
+        // this.flagForStop = false;
         this.stopPos = null;
         this.previousOrientation = null;
         this.anims.stop();
@@ -293,11 +264,11 @@ var Moving = new Phaser.Class({
             TutorialManager.checkHook();
         }
 
-        if(this.queuedPath){
-            var _path = this.queuedPath.slice();
-            this.queuedPath = null;
-            this.move(_path);
-        }
+        // if(this.queuedPath){
+        //     var _path = this.queuedPath.slice();
+        //     this.queuedPath = null;
+        //     this.move(_path);
+        // }
     },
 
     leaveFootprint: function(){
@@ -403,12 +374,6 @@ var Moving = new Phaser.Class({
             data.delay,
             itemAtlasPool
         );
-    },
-
-    handleOver: function(){
-    },
-
-    handleOut: function(){
     },
 
     isDisabled: function(){

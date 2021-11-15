@@ -41,12 +41,6 @@ ShopInventoryPanel.prototype.addPagination = function(){
     this.nextPage = UI.scene.add.sprite(this.pagetxts[3].x+this.pagetxts[3].width+3, 0,'UI','arrow');
 
     this.nextPage.setInteractive();
-    this.nextPage.on('pointerover',function(){
-        this.nextPage.setFrame('arrow_lit');
-    }.bind(this));
-    this.nextPage.on('pointerout',function(){
-        this.nextPage.setFrame('arrow');
-    }.bind(this));
     this.nextPage.on('pointerdown',function(){
         this.nextPage.setFrame('arrow_pressed');
     }.bind(this));
@@ -57,12 +51,6 @@ ShopInventoryPanel.prototype.addPagination = function(){
     }.bind(this));
 
     this.previousPage.setInteractive();
-    this.previousPage.on('pointerover',function(){
-        this.previousPage.setFrame('arrow_lit');
-    }.bind(this));
-    this.previousPage.on('pointerout',function(){
-        this.previousPage.setFrame('arrow');
-    }.bind(this));
     this.previousPage.on('pointerdown',function(){
         this.previousPage.setFrame('arrow_pressed');
     }.bind(this));

@@ -15,16 +15,6 @@ var menuIcon = function(x,y,icon,menu,tox,toy){
         if(Engine.bldRect) Engine.bldUnclick(true);
     });
     var bg_ = this.bg;
-    this.bg.on('pointerover',function(){
-        UI.tooltip.updateInfo('free',{title:menu.name});
-        UI.tooltip.display();
-        bg_.setFrame('holder_over');
-    });
-    //this.bg.on('pointerout',UI.tooltip.hide.bind(UI.tooltip));
-    this.bg.on('pointerout',function(){
-        UI.tooltip.hide();
-        bg_.setFrame('holder');
-    });
     this.displayed = true;
 };
 

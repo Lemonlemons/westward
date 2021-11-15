@@ -105,7 +105,6 @@ Menu.prototype.display = function(){
     Engine.inMenu = true;
     if(!this.allowWalk) Engine.hideMarker();
     if(!this.keepHUD) Engine.hideHUD();
-    UI.setCursor();
     this.displayed = true;
 
     if(this.log) Client.logMenu(this.name);

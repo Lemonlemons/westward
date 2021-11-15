@@ -2447,7 +2447,6 @@ GameServer.updateClients = function(){ //Function responsible for setting up and
         player.newAOIs.forEach(function(aoi){
             individualGlobalPkg.synchronize(GameServer.AOIs[aoi]); // fetch entities from the new AOIs
         });
-        // console.warn(individualGlobalPkg);
         player.oldAOIs.forEach(function(aoi){
             individualGlobalPkg.desync(GameServer.AOIs[aoi]); // forget entities from old AOIs
         });
