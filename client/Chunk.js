@@ -77,16 +77,11 @@ Chunk.prototype.hasWater = function(x,y){
 };
 
 Chunk.prototype.drawTile = function(x,y,tile){
-    /*if(BLIT){ // TODO: remove?
-        Editor.ground.create(x * World.tileWidth, y * World.tileHeight, tile);
-        return;
-    }*/
     var sprite = this.scene.add.image(x*World.tileWidth,y*World.tileHeight,'tileset',tile);
     sprite.setDisplayOrigin(0,0);
     sprite.tileID = tile;
     this.tiles.push(sprite);
     if(this.getAtlasData(tile,'collides',true)) this.addCollision(x,y);
-    this.postDrawTile(x,y,tile,sprite);
 };
 
 Chunk.prototype.getAtlasData = function(image,data,longname){

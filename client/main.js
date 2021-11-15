@@ -22,7 +22,8 @@ var config = {
     scene: [Boot, UI, Engine],
     dom: {
       createContainer: true
-    }
+    },
+    roundPixels: true
 };
 
 var game = new Phaser.Game(config);

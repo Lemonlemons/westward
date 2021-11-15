@@ -57,13 +57,6 @@ Capsule.prototype.setHoverText = function(tooltip,title,text){
     zone.setScrollFactor(0);
     zone.setInteractive();
     zone.setVisible(false);
-    zone.on('pointerover',function(){
-        tooltip.updateInfo('free',{title:title,body:text});
-        tooltip.display();
-    });
-    zone.on('pointerout',function(){
-        tooltip.hide();
-    });
     this.zone = zone;
 };
 

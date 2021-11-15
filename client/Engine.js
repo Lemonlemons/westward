@@ -83,7 +83,7 @@ var Engine = {
     // TODO: Move to conf
     maxPathLength: 36,
 
-    debugMarker: false,
+    debugMarker: true,
     debugCollisions: false,
     dummyUI: false,
 
@@ -324,23 +324,25 @@ Engine.create = function(){
     Engine.scene.input.setTopOnly(false);
     Engine.scene.input.on('pointerdown', Engine.handleDown);
     Engine.scene.input.on('pointerup', Engine.handleClick);
-    // Engine.scene.input.on('pointermove', Engine.trackMouse);
+    Engine.scene.input.on('pointermove', Engine.trackMouse);
 
     // TODO: move these to classes
-    Engine.scene.input.setPollAlways();
+    // Engine.scene.input.setPollAlways();
+    Engine.scene.input.on('pointerover', Engine.handleOver);
+    Engine.scene.input.on('pointerout', Engine.handleOut);
     Engine.scene.input.on('drag', Engine.handleDrag);
     Engine.scene.input.keyboard.on('keydown', Engine.handleKeyboard);
     Engine.cursors = Engine.scene.input.keyboard.createCursorKeys();
     Engine.addWASD();
     Engine.camLock = false;
 
-    Engine.mouseIn = true;
-    Engine.scene.game.canvas.onmouseenter = function(){
-        Engine.mouseIn = true;
-    };
-    Engine.scene.game.canvas.onmouseout = function(){
-        Engine.mouseIn = false;
-    };
+    // Engine.mouseIn = true;
+    // Engine.scene.game.canvas.onmouseenter = function(){
+    //     Engine.mouseIn = true;
+    // };
+    // Engine.scene.game.canvas.onmouseout = function(){
+    //     Engine.mouseIn = false;
+    // };
 
     Engine.collisions = new SpaceMap();
     Engine.overlay = new SpaceMap();
@@ -1854,6 +1856,27 @@ Engine.handleClick = function(pointer,objects){
     }
 };
 
+Engine.handleOver = function(pointer,objects){
+    if(pointer.x == 0 && pointer.y == 0) return; // quick fix
+    if(objects.length > 0){
+        for(var i = 0; i < Math.min(objects.length,2); i++) { // disallow bubbling too deep, only useful in menus (i.e. shallow)
+            var obj = objects[i];
+            if(obj.constructor.name == 'Building') Engine.hideMarker();
+            if(obj.handleOver) obj.handleOver();
+        }
+    }
+};
+
+Engine.handleOut = function(pointer,objects){
+    if(objects.length > 0) {
+        for(var i = 0; i < Math.min(objects.length,2); i++) { // disallow bubbling too deep, only useful in menus (i.e. shallow)
+            var obj = objects[i];
+            if(obj.constructor.name == 'Building' && (!Engine.inMenu || Engine.currentMenu.allowWalk)) Engine.showMarker();
+            if(obj.handleOut) obj.handleOut();
+        }
+    }
+};
+
 Engine.handleDrag = function(pointer,object,dragX,dragY){
     if(object && object.handleDrag) object.handleDrag(dragX,dragY);
 };
@@ -1870,7 +1893,7 @@ Engine.computePath = function(position,nextTo){
     if(x === undefined || y === undefined) console.warn('Pathfiding to undefined coordinates');
 
     var start = Engine.player.getPFstart();
-    // if(Engine.player.moving) Engine.player.stop();
+    if(Engine.player.moving) Engine.player.stop();
 
     var path = Engine.pathFinder.findPath(start,{x:x,y:y},false,nextTo); // seek = false, nextTo = true
     if(!path) {
@@ -1882,13 +1905,13 @@ Engine.computePath = function(position,nextTo){
         return;
     }
 
-    // var trim = PFUtils.trimPath(path,Engine.battleCellsMap);
-    // if(trim.trimmed) Engine.player.setDestinationAction(0);
-    // path = trim.path;
+    var trim = PFUtils.trimPath(path,Engine.battleCellsMap);
+    if(trim.trimmed) Engine.player.setDestinationAction(0);
+    path = trim.path;
 
     if(Engine.player.destinationAction && Engine.player.destinationAction.type != 1) path.pop();
-    // Client.sendPath(path,Engine.player.destinationAction);
-    Engine.player.queuePath(path);
+    Client.sendPath(path,Engine.player.destinationAction);
+    Engine.player.move(path);
 };
 
 // Engine.updatePosition = function(player){
@@ -1921,10 +1944,10 @@ Engine.getMouseCoordinates = function(pointer){
     // +16 so that the target tile is below the middle of the cursor
     var pxX = Engine.camera.scrollX + pointer.x;// + 16;
     var pxY = Engine.camera.scrollY + pointer.y;// + 16;
-    if(!Engine.debugMarker && !BattleManager.inBattle){
-        pxX += 16;
-        pxY += 16;
-    }
+    // if(!Engine.debugMarker && !BattleManager.inBattle){
+    //     pxX += 16;
+    //     pxY += 16;
+    // }
     var tileX = Math.floor(pxX/Engine.tileWidth);
     var tileY = Math.floor(pxY/Engine.tileHeight);
     Engine.lastPointer = {x:pointer.x,y:pointer.y};
@@ -1942,31 +1965,31 @@ Engine.isInView = function(x,y){ // TODOP: use camera.cull() instead
     return true;
 };
 
-// Engine.trackMouse = function(event){
-//     var position = Engine.getMouseCoordinates(event);
-//     if(Engine.player) Engine.updateMarker(position.tile);
-//     if(Engine.debug){
-//         if(document.getElementById('pxx')) document.getElementById('pxx').innerHTML = Math.round(event.x);
-//         if(document.getElementById('pxy'))  document.getElementById('pxy').innerHTML = Math.round(event.y);
-//         document.getElementById('tx').innerHTML = position.tile.x;
-//         document.getElementById('ty').innerHTML = position.tile.y;
-//         document.getElementById('aoi').innerHTML = Utils.tileToAOI(position.tile);
-//     }
-// };
+Engine.trackMouse = function(event){
+    var position = Engine.getMouseCoordinates(event);
+    if(Engine.player) Engine.updateMarker(position.tile);
+    if(Engine.debug){
+        if(document.getElementById('pxx')) document.getElementById('pxx').innerHTML = Math.round(event.x);
+        if(document.getElementById('pxy'))  document.getElementById('pxy').innerHTML = Math.round(event.y);
+        document.getElementById('tx').innerHTML = position.tile.x;
+        document.getElementById('ty').innerHTML = position.tile.y;
+        document.getElementById('aoi').innerHTML = Utils.tileToAOI(position.tile);
+    }
+};
 
-// Engine.updateMarker = function(tile){
-//     Engine.marker.x = (tile.x*Engine.tileWidth);
-//     Engine.marker.y = (tile.y*Engine.tileHeight);
-//     if(Engine.bldRect) Engine.updateBldRect();
-//     if(tile.x != Engine.marker.previousTile.x || tile.y != Engine.marker.previousTile.y){
-//         Engine.marker.previousTile = tile;
-//         if(Engine.checkCollision(tile.x,tile.y)){
-//             if(Engine.debugMarker) Engine.marker.setFrame(1);
-//         }else{
-//             if(Engine.debugMarker) Engine.marker.setFrame(0);
-//         }
-//     }
-// };
+Engine.updateMarker = function(tile){
+    Engine.marker.x = (tile.x*Engine.tileWidth);
+    Engine.marker.y = (tile.y*Engine.tileHeight);
+    if(Engine.bldRect) Engine.updateBldRect();
+    if(tile.x != Engine.marker.previousTile.x || tile.y != Engine.marker.previousTile.y){
+        Engine.marker.previousTile = tile;
+        if(Engine.debugMarker && Engine.checkCollision(tile.x,tile.y)){
+            Engine.marker.setFrame(1);
+        }else{
+            Engine.marker.setFrame(0);
+        }
+    }
+};
 
 Engine.hideMarker = function(){
     if(Engine.marker) Engine.marker.setVisible(false);
@@ -1985,35 +2008,35 @@ Engine.updateSelf = function(data){
 };
 
 //UPDT
-Engine.update = function(){
-    if(Engine.camLock) return;
-    var p = Engine.scene.input.activePointer.position;
-    if(p.x == 0 && p.y == 0) return;
-    var margin = 10;
-    var dx = 0;
-    var dy = 0;
-    if(p.x < margin || Engine.cursors.left.isDown ||(Engine.WASD.A.isDown && !Engine.chatBar.displayed)){
-        dx = -1;
-    }else if(p.x > UI.getGameWidth() - margin || Engine.cursors.right.isDown || (Engine.WASD.D.isDown && !Engine.chatBar.displayed)){
-        dx = 1;
-    }
-    if(p.y < margin || Engine.cursors.up.isDown || (Engine.WASD.W.isDown && !Engine.chatBar.displayed)){
-        dy = -1;
-    }else if(p.y > UI.getGameHeight() - margin || Engine.cursors.down.isDown || (Engine.WASD.S.isDown && !Engine.chatBar.displayed)){
-        dy = 1;
-    }
-    if(dx == 0 && dy == 0) return;
-    Engine.scrollCamera(dx,dy);
-};
+// Engine.update = function(){
+//     if(Engine.camLock) return;
+//     var p = Engine.scene.input.activePointer.position;
+//     if(p.x == 0 && p.y == 0) return;
+//     var margin = 10;
+//     var dx = 0;
+//     var dy = 0;
+//     if(p.x < margin || Engine.cursors.left.isDown ||(Engine.WASD.A.isDown && !Engine.chatBar.displayed)){
+//         dx = -1;
+//     }else if(p.x > UI.getGameWidth() - margin || Engine.cursors.right.isDown || (Engine.WASD.D.isDown && !Engine.chatBar.displayed)){
+//         dx = 1;
+//     }
+//     if(p.y < margin || Engine.cursors.up.isDown || (Engine.WASD.W.isDown && !Engine.chatBar.displayed)){
+//         dy = -1;
+//     }else if(p.y > UI.getGameHeight() - margin || Engine.cursors.down.isDown || (Engine.WASD.S.isDown && !Engine.chatBar.displayed)){
+//         dy = 1;
+//     }
+//     if(dx == 0 && dy == 0) return;
+//     Engine.scrollCamera(dx,dy);
+// };
 
-Engine.scrollCamera = function(dx,dy){
-    var speed = 10;
-    dx *= 10;
-    dy *= 10;
-    var x = Engine.camera.worldView.x;
-    var y = Engine.camera.worldView.y;
-    Engine.camera.setScroll(x+dx, y+dy);
-}
+// Engine.scrollCamera = function(dx,dy){
+//     var speed = 10;
+//     dx *= 10;
+//     dy *= 10;
+//     var x = Engine.camera.worldView.x;
+//     var y = Engine.camera.worldView.y;
+//     Engine.camera.setScroll(x+dx, y+dy);
+// }
 
 //TODO: compute once
 Engine.getAnimalData = function(type){
@@ -2303,7 +2326,6 @@ Engine.debugQT = function(quads){
     });
 };
 
-Chunk.prototype.postDrawTile = function(){}; // Used in editor
 Chunk.prototype.postDrawImage = function(x,y,image,sprite){
     var hover = this.getAtlasData(image,'hover');
     if(!hover) return;
@@ -2311,20 +2333,20 @@ Chunk.prototype.postDrawImage = function(x,y,image,sprite){
     sprite.tx = Math.floor(x);
     sprite.ty = Math.floor(y);
     sprite.setInteractive();
-    // sprite.on('pointerover',function(){
-    //     UI.hoverFlower++;
-    //     sprite.formerFrame = sprite.frame.name;
-    //     sprite.setFrame(hover);
-    //     Engine.hideMarker();
-    // });
-    // sprite.on('pointerout',function(){
-    //     UI.hoverFlower--;
-    //     sprite.setFrame(sprite.formerFrame);
-    //     if(UI.hoverFlower <= 0) {
-    //         Engine.showMarker();
-    //     }
-    // });
-    sprite.on('pointerdown',function(){
+    sprite.on('pointerover',function(){
+        UI.hoverFlower++;
+        sprite.formerFrame = sprite.frame.name;
+        sprite.setFrame(hover);
+        Engine.hideMarker();
+    });
+    sprite.on('pointerout',function(){
+        UI.hoverFlower--;
+        sprite.setFrame(sprite.formerFrame);
+        if(UI.hoverFlower <= 0) {
+            Engine.showMarker();
+        }
+    });
+    sprite.on('pointerup',function(){
         if(!BattleManager.inBattle) Engine.processItemClick(sprite,true);
     });
 };
@@ -2362,10 +2384,6 @@ window.debugPlayer = function(){
 
 window.debugEngine = function(){
     console.log(Engine);
-};
-
-window.debugPointer = function(){
-    console.log(Engine.scene.input.activePointer);
 };
 
 window.debugCamera = function(){

@@ -79,7 +79,7 @@ var Moving = new Phaser.Class({
 
     move: function(path){
         //if(this.isHero) console.log('move from (',path[0][0],',',path[0][1],') to (',path[path.length-1][0],',',path[path.length-1][1],')');
-        if(!path || path.length <= 0) {
+        if(!path || path.length <= 1) {
             this.endMovement();
             return;
         }
@@ -97,7 +97,7 @@ var Moving = new Phaser.Class({
                 targets: this,
                 x: ex*Engine.tileWidth,
                 y: ey*Engine.tileHeight,
-                duration: 125,
+                duration: 175,
                 onStartParams: [sx,sy,ex,ey],
                 onStart: this.tileByTilePreUpdate.bind(this),
                 onComplete: this.tileByTilePostUpdate.bind(this)
@@ -146,10 +146,7 @@ var Moving = new Phaser.Class({
 
         if(this.orientation != this.previousOrientation) {
             this.previousOrientation = this.orientation;
-            // console.warn(this.getTextureName() + '_move_' + this.orientation);
             this.play(this.getTextureName() + '_move_' + this.orientation);
-            // console.warn(this);
-            // console.warn(this.anims.currentAnim.key, this.anims.currentFrame.index);
         }
     },
 
@@ -170,9 +167,9 @@ var Moving = new Phaser.Class({
         
         // this.leaveFootprint();
         // this.playSound();
-        // if(this.isHero){
-        //     if(Engine.miniMap) Engine.miniMap.follow();
-        // }
+        if(this.isHero){
+            if(Engine.miniMap) Engine.miniMap.follow();
+        }
 
         // if(this.flagForStop || (this.stopPos && this.stopPos.x == tx && this.stopPos.y == ty)){
         //     this.movement.stop();
@@ -267,11 +264,11 @@ var Moving = new Phaser.Class({
             TutorialManager.checkHook();
         }
 
-        if(this.queuedPath){
-            var _path = this.queuedPath.slice();
-            this.queuedPath = null;
-            this.move(_path);
-        }
+        // if(this.queuedPath){
+        //     var _path = this.queuedPath.slice();
+        //     this.queuedPath = null;
+        //     this.move(_path);
+        // }
     },
 
     leaveFootprint: function(){

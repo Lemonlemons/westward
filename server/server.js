@@ -42,7 +42,6 @@ app.use('/dist',express.static('./dist'));
 app.use('/maps',express.static('./maps'));
 app.use('/admin',express.static('./admin'));
 app.use('/api',express.static('./admin'));
-app.use('/editor',express.static('./editor'));
 
 // app.use((req, res, next) => { //change app.all to app.use here and remove '*', i.e. the first parameter part
 //     res.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
@@ -87,14 +86,6 @@ app.get('/api',function(req,res){
     res.type("application/json");
     res.type("jpg");
     res.sendFile(path.join(__dirname,'admin','admin.html'));
-});
-
-app.get('/editor',function(req,res){
-    res.sendFile(path.join(__dirname,'editor','index.html'));
-});
-
-app.get('/crafting',function(req,res){
-    res.sendFile(path.join(__dirname,'editor','crafting.html'));
 });
 
 var GEThandlers = {

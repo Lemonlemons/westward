@@ -51,7 +51,7 @@ var Player = new Phaser.Class({
     },
 
     update: function (data) {
-        console.log('updating player');
+        // console.log('updating player');
         Moving.prototype.update.call(this, data);
         if (data.x >= 0 && data.y >= 0) this.teleport(data.x, data.y);
 
